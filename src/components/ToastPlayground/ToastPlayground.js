@@ -3,6 +3,7 @@ import React from 'react';
 import Button from '../Button';
 import Toast from '../Toast';
 import ToastShelf from '../ToastShelf';
+import { ToastContext } from '../ToastProvider';
 
 import styles from './ToastPlayground.module.css';
 
@@ -13,35 +14,16 @@ function ToastPlayground() {
     // going from uncontrolled to controlled
     const [message, setMessage] = React.useState('')
     const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]) // Default to first option
-    const [showToast, setShowToast] = React.useState(false)
-
-    const [toastList, setToastList] = React.useState([])
-    
+    const { createNewToast } = React.useContext(ToastContext)
     
     function handlePopToast(event) {
         event.preventDefault()
         
-        const newToast = {
-            id: Math.random(),
-            message,
-            variant,
-        }
-        
-        const nextToasts = [...toastList, newToast]
-        setToastList(nextToasts)
+        createNewToast(message, variant)
         
         setMessage('')
         setVariant(VARIANT_OPTIONS[0])
     }
-    
-    function handleDismiss(id) {
-        const nextToasts = toastList.filter(toast => {
-            return toast.id !== id
-        })
-        
-        setToastList(nextToasts)
-    }
-    console.log(toastList)
     
     return (
         <div className={styles.wrapper}>
@@ -50,7 +32,7 @@ function ToastPlayground() {
             <h1>Toast Playground</h1>
         </header>
         
-        <ToastShelf toastList={toastList} handleDismiss={handleDismiss}/>
+        <ToastShelf />
    
         <form 
             className={styles.controlsWrapper} 
@@ -103,7 +85,7 @@ function ToastPlayground() {
             <div
                 className={`${styles.inputWrapper} ${styles.radioWrapper}`}
             >
-                <Button onClick={() => setShowToast(true)}>Pop Toast!</Button>
+                <Button>Pop Toast!</Button>
             </div>
             </div>
         </form>
