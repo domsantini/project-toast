@@ -14,7 +14,23 @@ function ToastPlayground() {
     // going from uncontrolled to controlled
     const [message, setMessage] = React.useState('')
     const [variant, setVariant] = React.useState(VARIANT_OPTIONS[0]) // Default to first option
-    const { createNewToast } = React.useContext(ToastContext)
+    const { createNewToast, dismissAllToasts } = React.useContext(ToastContext)
+    
+    React.useEffect(() => {
+        function handleEscape(event) {
+            if (event.key !== 'Escape') {
+                return
+            }
+            dismissAllToasts()
+        }
+        
+        window.addEventListener('keydown', handleEscape)
+        
+        return () => {
+            window.removeEventListener('keydown', handleEscape)
+        }
+        
+    }, [])
     
     function handlePopToast(event) {
         event.preventDefault()
